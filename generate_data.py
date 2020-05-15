@@ -43,6 +43,7 @@ class DamageInfo():
         return self.damage >= other.damage
 
 
+# I need to reduce the size of this function, it's a bit bloated
 def calculate_counters(config: dict):
     """
     Ranks each troop in each race damage against each armour type.
@@ -64,7 +65,7 @@ def calculate_counters(config: dict):
     logging.debug("Done")
 
     for race in troops_dict:
-        logging.info(f"STARTING ON {race}")
+        logging.info(f"Starting on {race}")
 
         counters[race] = create_dict_from_list(armour_types)
 
@@ -81,7 +82,7 @@ def calculate_counters(config: dict):
 
                     counters[race][armour_type].append(new_damage_info)
 
-        logging.info(f"FINISHED {race}")
+        logging.info(f"Finished {race}")
 
     logging.debug("Saving counters to file")
     save_to_json(config["data"]["counters"], counters)
@@ -97,12 +98,12 @@ def sort_counters(counters: dict):
     :returns: the counters dict with sorted armour type counters
     """
     for race in counters:
-        logging.info(f"STARTING SORTING FOR {race}")
+        logging.info(f"Starting sorting for {race}")
 
         for armour_type in counters[race]:
             counters[race][armour_type].sort(reverse=True)
 
-        logging.info(f"FINISHED SORTING FOR {race}")
+        logging.info(f"Finished sorting for {race}")
 
     return counters
 
@@ -249,6 +250,8 @@ def run():
 
     setup_logging(config)
 
+    logging.info("Starting generation of data")
+
     generate_weapon_info_and_armour_types(config)
 
     generate_troop_info(config)
@@ -256,6 +259,8 @@ def run():
     optimise_armour_types(config)
 
     calculate_counters(config)
+
+    logging.info("Finished generating data\n\n")
 
 
 if __name__ == "__main__":
