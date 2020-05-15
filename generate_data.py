@@ -65,7 +65,7 @@ def calculate_counters(config: dict):
     logging.debug("Done")
 
     for race in troops_dict:
-        logging.info(f"Starting on {race}")
+        logging.info(f"Starting finding counters for {race}")
 
         counters[race] = create_dict_from_list(armour_types)
 
@@ -82,7 +82,7 @@ def calculate_counters(config: dict):
 
                     counters[race][armour_type].append(new_damage_info)
 
-        logging.info(f"Finished {race}")
+        logging.info(f"Finished finding counters for {race}")
 
     logging.debug("Saving counters to file")
     save_to_json(config["data"]["counters"], counters)
@@ -98,12 +98,12 @@ def sort_counters(counters: dict):
     :returns: the counters dict with sorted armour type counters
     """
     for race in counters:
-        logging.info(f"Starting sorting for {race}")
+        logging.info(f"Starting counters sorting for {race}")
 
         for armour_type in counters[race]:
             counters[race][armour_type].sort(reverse=True)
 
-        logging.info(f"Finished sorting for {race}")
+        logging.info(f"Finished counters sorting for {race}")
 
     return counters
 
@@ -171,18 +171,6 @@ def optimise_armour_types(config: dict):
     logging.debug("Done")
 
 
-def setup_logging(config: dict):
-    """
-    Sets up the logging configuration
-
-    :param config: the configuration for the program
-    """
-    logging_level = config["loggingLevel"]
-    FORMAT = "%(asctime)s GENERATE DATA: %(message)s"
-    logging.basicConfig(filename="logs.log",
-                        level=logging_level, format=FORMAT)
-
-
 def generate_weapon_info_and_armour_types(config: dict):
     """
     Pulls the armour types and all weapons from the weapon config file,
@@ -190,7 +178,7 @@ def generate_weapon_info_and_armour_types(config: dict):
 
     :param config: the configuration for the program
     """
-    logging.debug("Collating armour types and weapon data")
+    logging.info("Collating armour types and weapon data")
     armour_types_set, weapons_dict = collate_weapon_data(
         config["corsix_weapon_dps"])
     logging.debug("Done")
@@ -212,7 +200,7 @@ def generate_armour_type_info(config: dict, armour_types_set: set):
     """
     armour_type_file = config["corsix_weapon_dps"]
 
-    logging.debug("Mapping troops to armour types")
+    logging.info("Mapping troops to armour types")
     armour_types_dict = map_troops_to_armour_types(
         armour_type_file, armour_types_set)
 
@@ -235,13 +223,26 @@ def generate_troop_info(config: dict):
     armour_types_dict = load_from_json(config["data"]["armourTypes"])
     logging.debug("Done")
 
-    logging.debug("Collating troop data")
+    logging.info("Collating troop data")
     troops_dict = collate_troop_data(
         config["troops"], weapons_dict, armour_types_dict["troopsToArmourType"])
 
     logging.debug("Saving troop data to file")
     save_to_json(config["data"]["troops"], troops_dict)
     logging.debug("Done")
+
+
+def setup_logging(config: dict):
+    """
+    Sets up the logging configuration
+
+    :param config: the configuration for the program
+    """
+    logging_level = config["loggingLevel"]
+    filemode = "w" if config["loggingOverwrite"] else "a"
+    FORMAT = "%(asctime)s %(levelname)s: %(message)s"
+    logging.basicConfig(filename="logs.log",
+                        level=logging_level, format=FORMAT, filemode=filemode)
 
 
 def run():
