@@ -1,0 +1,27 @@
+{
+    "corsix_weapon_dps": "input/weapon_stats.csv",
+    "output_directory": "output/",
+
+    "data": {
+        "armourTypes": "data/armourTypes.json",
+        "weapons": "data/weapons.json",
+        "troops": "data/troops.json",
+        "counters": "data/counters.json",
+        "optimisedArmourTypes": "data/optimisedArmourTypes.json"
+    },
+    
+    "troops": {
+        "Chaos Space Marines": "input/chaos",
+        "Chaos Daemons": "input/daemons",
+        "Dark Eldar": "input/dark_eldar",
+        "Eldar": "input/eldar",
+        "Imperial Guard": "input/guard",
+        "Inquisition Daemonhunters": "input/inquisition_daemonhunters",
+        "Necrons": "input/necrons",
+        "Orks": "input/orks",
+        "Sisters of Battle": "input/sisters",
+        "Space Marines": "input/space_marines",
+        "Tau": "input/tau",
+        "Tyranids": "input/tyranids"
+    }
+}

@@ -1,0 +1,1 @@
+This program does not properly support directories with "." in the name

@@ -1,0 +1,6 @@
+gitignore/
+*.log
+data/
+*.ui
+__pycache__/
+input/
