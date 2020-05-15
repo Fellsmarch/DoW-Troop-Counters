@@ -63,20 +63,13 @@ def calculate_counters(config: dict):
     Ranks each troop in each race damage against each armour type.
 
     :param config: the configuration for the program
-
     :returns: a dictionary containing each race's troop damage against
                 each armour type
     """
     counters = {}
     armour_types = get_armour_types(config)
-
-    logging.debug("Loading weapon data")
     weapons_dict = load_from_json(config["data"]["weapons"])
-    logging.debug("Done")
-
-    logging.debug("Loading troop data")
     troops_dict = load_from_json(config["data"]["troops"])
-    logging.debug("Done")
 
     for race in troops_dict:
         logging.info(f"Starting finding counters for {race}")
@@ -98,9 +91,7 @@ def calculate_counters(config: dict):
 
         logging.info(f"Finished finding counters for {race}")
 
-    logging.debug("Saving counters to file")
     save_to_json(config["data"]["counters"], counters)
-    logging.debug("Done")
 
 
 def sort_counters(counters: dict):
@@ -108,7 +99,6 @@ def sort_counters(counters: dict):
     Sorts the counters into descending order.
 
     :param counters: the counters to sort
-
     :returns: the counters dict with sorted armour type counters
     """
     for race in counters:
@@ -128,20 +118,17 @@ def get_armour_types(config: dict):
     types
 
     :param config: the configuration for the program
-
     :returns: the armour types that were found
     """
     armour_types = None
 
     try:
-        logging.debug("Trying to load optimised armour types")
         armour_types = load_from_json(config["data"]["optimisedArmourTypes"])
     except PathNotFoundError:
         logging.warning(
             "Could not load optimised armour types, attempting to load non-optimised armour types")
         armour_types = load_from_json(config["data"]["armourTypes"])
 
-    logging.debug("Successfully retrieved armour types")
     return armour_types
 
 
@@ -151,7 +138,6 @@ def create_dict_from_list(input_list: list):
     are the list items and the values are empty lists.
 
     :param input_list: a list of value to turn into a dictionary
-
     :returns: a dictionary with list items mapped to empty lists
     """
     new_dict = {}
@@ -168,9 +154,7 @@ def optimise_armour_types(config: dict):
 
     :param config: the configuration for the program
     """
-    logging.debug("Loading armour types from file for optimisation")
     armour_types_dict = load_from_json(config["data"]["armourTypes"])
-    logging.debug("Done")
 
     optimised_armour_types = []
     armour_types = armour_types_dict["armourTypeToTroops"]
@@ -179,10 +163,8 @@ def optimise_armour_types(config: dict):
         if armour_types[armour_type]:
             optimised_armour_types.append(armour_type)
 
-    logging.debug("Saving optimised armour types to file")
     save_to_json(config["data"]["optimisedArmourTypes"],
                  optimised_armour_types)
-    logging.debug("Done")
 
 
 def generate_weapon_info_and_armour_types(config: dict):
@@ -197,9 +179,7 @@ def generate_weapon_info_and_armour_types(config: dict):
         config["corsix_weapon_dps"])
     logging.debug("Done")
 
-    logging.debug("Saving weapons to file")
     save_to_json(config["data"]["weapons"], weapons_dict)
-    logging.debug("Done")
 
     generate_armour_type_info(config, armour_types_set)
 
@@ -218,9 +198,7 @@ def generate_armour_type_info(config: dict, armour_types_set: set):
     armour_types_dict = map_troops_to_armour_types(
         armour_type_file, armour_types_set)
 
-    logging.debug("Saving armour types to file")
     save_to_json(config["data"]["armourTypes"], armour_types_dict)
-    logging.debug("Done")
 
 
 def generate_troop_info(config: dict):
@@ -229,21 +207,14 @@ def generate_troop_info(config: dict):
 
     :param config: the configuration for the program
     """
-    logging.debug("Loading data files for weapons")
     weapons_dict = load_from_json(config["data"]["weapons"])
-    logging.debug("Done")
-
-    logging.debug("Loading data files for armour types")
     armour_types_dict = load_from_json(config["data"]["armourTypes"])
-    logging.debug("Done")
 
     logging.info("Collating troop data")
     troops_dict = collate_troop_data(
         config["troops"], weapons_dict, armour_types_dict["troopsToArmourType"])
 
-    logging.debug("Saving troop data to file")
     save_to_json(config["data"]["troops"], troops_dict)
-    logging.debug("Done")
 
 
 def setup_logging(config: dict):
