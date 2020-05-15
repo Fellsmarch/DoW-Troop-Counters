@@ -3,11 +3,23 @@ import logging
 from weapons import collate_weapon_data
 from troops import collate_troop_data
 from armour_types import map_troops_to_armour_types
-from file_handlers import create_and_check_path, load_from_json, save_to_json
+from file_handlers import create_and_check_path, load_from_json, save_to_json, PathNotFoundError
 
 
 class DamageInfo():
-    def __init__(self, troop_file, weapon, damage):
+    """
+    A class to store information about a troop's damage.
+    It has comparison functions so that we can .sort()
+    a list of DamageInfo objects.
+    """
+
+    def __init__(self, troop_file: str, weapon: str, damage: float):
+        """
+        :param troop_file: the troop's .lua filename
+        :param weapon: the associated weapon filename with this damage
+        :param damage: the damage (per second) this weapon does to the
+                        selected armour type
+        """
         self.troop_file = troop_file
         self.weapon = weapon
         self.damage = damage
@@ -31,35 +43,101 @@ class DamageInfo():
         return self.damage >= other.damage
 
 
-def calculate_counters(armour_types, weapons_dict, troops_dict):
+def calculate_counters(config: dict):
     """
-    Ranks each troop in each race damage against each armour type
+    Ranks each troop in each race damage against each armour type.
+
+    :param config: the configuration for the program
+
+    :returns: a dictionary containing each race's troop damage against
+                each armour type
     """
-    final = {}
+    counters = {}
+    armour_types = get_armour_types(config)
+
+    logging.debug("Loading weapon data")
+    weapons_dict = load_from_json(config["data"]["weapons"])
+    logging.debug("Done")
+
+    logging.debug("Loading troop data")
+    troops_dict = load_from_json(config["data"]["troops"])
+    logging.debug("Done")
 
     for race in troops_dict:
-        print(f"STARTING ON {race}")
-        final[race] = create_dict_from_list(armour_types)
+        logging.info(f"STARTING ON {race}")
 
-        for troop in troops_dict[race]:
+        counters[race] = create_dict_from_list(armour_types)
+
+        for troop in troops_dict[race]:  # For each troop in a race
+            # For each weapon that troop has
             for weapon in troops_dict[race][troop]["weapons"]:
                 for armour_type in armour_types:
-                    new_damage_info = DamageInfo(troop, weapon, weapons_dict[weapon][armour_type])
-                    final[race][armour_type].append(new_damage_info)
-        
-        print(f"FINISHED {race}")
-        print(f"STARTING SORTING FOR {race}")
-        for armour_type in final[race]:
-            final[race][armour_type].sort(reverse=True)
-        print(f"FINISHED SORTING FOR {race}\n")
 
-    return final
-            
+                    new_damage_info = DamageInfo(
+                        troop,
+                        weapon,
+                        weapons_dict[weapon][armour_type]
+                    )
 
-def create_dict_from_list(input_list):
+                    counters[race][armour_type].append(new_damage_info)
+
+        logging.info(f"FINISHED {race}")
+
+    logging.debug("Saving counters to file")
+    save_to_json(config["data"]["counters"], counters)
+    logging.debug("Done")
+
+
+def sort_counters(counters: dict):
+    """
+    Sorts the counters into descending order.
+
+    :param counters: the counters to sort
+
+    :returns: the counters dict with sorted armour type counters
+    """
+    for race in counters:
+        logging.info(f"STARTING SORTING FOR {race}")
+
+        for armour_type in counters[race]:
+            counters[race][armour_type].sort(reverse=True)
+
+        logging.info(f"FINISHED SORTING FOR {race}")
+
+    return counters
+
+
+def get_armour_types(config: dict):
+    """
+    Gets the armour types from file. Prioritises the optimised armour
+    types
+
+    :param config: the configuration for the program
+
+    :returns: the armour types that were found
+    """
+    armour_types = None
+
+    try:
+        logging.debug("Trying to load optimised armour types")
+        armour_types = load_from_json(config["data"]["optimisedArmourTypes"])
+    except PathNotFoundError:
+        logging.warning(
+            "Could not load optimised armour types, attempting to load non-optimised armour types")
+        armour_types = load_from_json(config["data"]["armourTypes"])
+
+    logging.debug("Successfully retrieved armour types")
+    return armour_types
+
+
+def create_dict_from_list(input_list: list):
     """
     Creates a dictionary from an input list where the keys
     are the list items and the values are empty lists.
+
+    :param input_list: a list of value to turn into a dictionary
+
+    :returns: a dictionary with list items mapped to empty lists
     """
     new_dict = {}
     for item in input_list:
@@ -68,50 +146,117 @@ def create_dict_from_list(input_list):
     return new_dict
 
 
-def optimise_armour_types(armour_types_dict):
+def optimise_armour_types(config: dict):
     """
-    Removes any un-used armour types from the armour_types_dict.
+    Removes any un-used armour types from the armour types and 
+    saves the result to file.
+
+    :param config: the configuration for the program
     """
+    logging.debug("Loading armour types from file for optimisation")
+    armour_types_dict = load_from_json(config["data"]["armourTypes"])
+    logging.debug("Done")
+
     optimised_armour_types = []
     armour_types = armour_types_dict["armourTypeToTroops"]
+
     for armour_type in armour_types:
         if armour_types[armour_type]:
             optimised_armour_types.append(armour_type)
 
-    return optimised_armour_types
+    logging.debug("Saving optimised armour types to file")
+    save_to_json(config["data"]["optimisedArmourTypes"],
+                 optimised_armour_types)
+    logging.debug("Done")
 
 
-def main():
-    config_filename = "config.json"
-    config = load_from_json(config_filename)
+def setup_logging(config: dict):
+    """
+    Sets up the logging configuration
 
-    logging.info("test")
+    :param config: the configuration for the program
+    """
+    logging_level = config["loggingLevel"]
+    FORMAT = "%(asctime)s GENERATE DATA: %(message)s"
+    logging.basicConfig(filename="logs.log",
+                        level=logging_level, format=FORMAT)
 
-    armour_types_set, weapons_dict = collate_weapon_data(config["corsix_weapon_dps"])
+
+def generate_weapon_info_and_armour_types(config: dict):
+    """
+    Pulls the armour types and all weapons from the weapon config file,
+    formats them and then saves the them to storage files.
+
+    :param config: the configuration for the program
+    """
+    logging.debug("Collating armour types and weapon data")
+    armour_types_set, weapons_dict = collate_weapon_data(
+        config["corsix_weapon_dps"])
+    logging.debug("Done")
+
+    logging.debug("Saving weapons to file")
     save_to_json(config["data"]["weapons"], weapons_dict)
+    logging.debug("Done")
 
-    armour_types_dict = map_troops_to_armour_types(config["corsix_weapon_dps"], armour_types_set)
+    generate_armour_type_info(config, armour_types_set)
+
+
+def generate_armour_type_info(config: dict, armour_types_set: set):
+    """
+    Generates the armour type dict containing the armour type to troops
+    mapping and the troops to armour type mapping.
+
+    :param config: the configuration for the program
+    :param armour_types_set: the set of armour types
+    """
+    armour_type_file = config["corsix_weapon_dps"]
+
+    logging.debug("Mapping troops to armour types")
+    armour_types_dict = map_troops_to_armour_types(
+        armour_type_file, armour_types_set)
+
+    logging.debug("Saving armour types to file")
     save_to_json(config["data"]["armourTypes"], armour_types_dict)
+    logging.debug("Done")
 
-    troops_dict = collate_troop_data(config["troops"], weapons_dict, armour_types_dict["troopsToArmourType"])
+
+def generate_troop_info(config: dict):
+    """
+    Generates the troop information and saves it to a data file.
+
+    :param config: the configuration for the program
+    """
+    logging.debug("Loading data files for weapons")
+    weapons_dict = load_from_json(config["data"]["weapons"])
+    logging.debug("Done")
+
+    logging.debug("Loading data files for armour types")
+    armour_types_dict = load_from_json(config["data"]["armourTypes"])
+    logging.debug("Done")
+
+    logging.debug("Collating troop data")
+    troops_dict = collate_troop_data(
+        config["troops"], weapons_dict, armour_types_dict["troopsToArmourType"])
+
+    logging.debug("Saving troop data to file")
     save_to_json(config["data"]["troops"], troops_dict)
-
-    optimised_armour_types = optimise_armour_types(armour_types_dict)
-    save_to_json(config["data"]["optimisedArmourTypes"], optimised_armour_types)
-
-    counters = calculate_counters(optimised_armour_types, weapons_dict, troops_dict)
-    save_to_json(config["data"]["counters"], counters)
+    logging.debug("Done")
 
 
 def run():
-    """
-    Alternate function for running the program
-    """
-    FORMAT = "%(asctime)s GENERATE DATA: %(message)s"
-    logging.basicConfig(filename="logs.log", level=logging.INFO, format=FORMAT)
+    config_filename = "config.json"
+    config = load_from_json(config_filename)
 
-    main()
+    setup_logging(config)
+
+    generate_weapon_info_and_armour_types(config)
+
+    generate_troop_info(config)
+
+    optimise_armour_types(config)
+
+    calculate_counters(config)
 
 
 if __name__ == "__main__":
-    main()
+    run()

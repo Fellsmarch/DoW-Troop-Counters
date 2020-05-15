@@ -1,6 +1,6 @@
 {
     "corsix_weapon_dps": "input/weapon_stats.csv",
-    "output_directory": "output/",
+    "loggingLevel": "INFO",
 
     "data": {
         "armourTypes": "data/armourTypes.json",
