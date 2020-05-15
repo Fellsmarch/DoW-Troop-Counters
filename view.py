@@ -111,7 +111,10 @@ class MainWindow(QtWidgets.QMainWindow):
         status_label.setText("Generating data...")
         status_label.text()
 
-        generate_data.run()
+        try:
+            generate_data.run()
+        except Exception as e:
+            status_label.setText(f"Failed to generate data: {e}")
         status_label.setText("Populating GUI elements...")
 
         self.init()

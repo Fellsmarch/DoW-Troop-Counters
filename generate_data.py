@@ -1,3 +1,17 @@
+"""
+Generates a list of how much damage each DoW troop does against each
+armour type.
+
+It does this by generating data files for: 
+ - Weapons -- Each weapon and it's damage against each armour type
+ - Armour types -- A list of armour types that exist in DoW
+ - Optimised armour types -- A list off armour types that are used in DoW
+ - Troops -- Every troop in DoW and which weapons they have. Organised by race
+
+Harrison Cook
+May 2020
+"""
+
 import logging
 
 from weapons import collate_weapon_data
@@ -241,7 +255,7 @@ def setup_logging(config: dict):
     logging_level = config["loggingLevel"]
     filemode = "w" if config["loggingOverwrite"] else "a"
     FORMAT = "%(asctime)s %(levelname)s: %(message)s"
-    logging.basicConfig(filename="logs.log",
+    logging.basicConfig(filename="generate_data.log",
                         level=logging_level, format=FORMAT, filemode=filemode)
 
 
