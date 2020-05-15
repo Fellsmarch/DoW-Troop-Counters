@@ -18,7 +18,7 @@ def collate_weapon_data(weapon_input_filename: str):
     Collates the weapon data and armour types from the given input file.
 
     :param weapon_input_filename: the filename/path to the weapon input file
-    
+
     :returns: (a dictionary of armour types and their associated troops,
                 a dictionary of all weapons andtheir dps) 
     """
@@ -34,7 +34,7 @@ def weapon_file_reader(weapon_input_path: Path):
     Reads weapon information and armour types from the weapon file.
 
     :param weapon_input_path: the Path to the weapon input file
-    
+
     :returns: (a set of all armour types, a list of the weapon csv rows)
     """
     logging.debug("Loading weapon input csv file")
@@ -50,13 +50,16 @@ def weapon_file_reader(weapon_input_path: Path):
                 armour_types = line[1:]
 
             # Skip other header/damage_type lines
-            if ".rgd" not in line[0]: continue
+            if ".rgd" not in line[0]:
+                continue
 
             weapon_rows.append(line)
 
         if not armour_types:
-            logging.critical("Could not find header row (armour types) in weapon stats file")
-            raise Exception("Could not find header row (armour types) in weapon stats file")
+            logging.critical(
+                "Could not find header row (armour types) in weapon stats file")
+            raise Exception(
+                "Could not find header row (armour types) in weapon stats file")
 
     return set(armour_types), weapon_rows
 
@@ -90,7 +93,7 @@ def get_weapon_dict(armour_types: set, weapon_row: list):
 
     :returns: a dictionary of a single weapon mapped to it's damage
                 against each armour type
-    """ 
+    """
     # Replace file type since units reference .lua not .rgd
     weapon_file_name = weapon_row[0].replace(".rgd", ".lua")
 
