@@ -18,7 +18,6 @@ def collate_weapon_data(weapon_input_filename: str):
     Collates the weapon data and armour types from the given input file.
 
     :param weapon_input_filename: the filename/path to the weapon input file
-
     :returns: (a dictionary of armour types and their associated troops,
                 a dictionary of all weapons andtheir dps) 
     """
@@ -34,8 +33,8 @@ def weapon_file_reader(weapon_input_path: Path):
     Reads weapon information and armour types from the weapon file.
 
     :param weapon_input_path: the Path to the weapon input file
-
     :returns: (a set of all armour types, a list of the weapon csv rows)
+    :raises: a generic exception when the armour types cannot be found
     """
     logging.debug("Loading weapon input csv file")
     with open(weapon_input_path) as csv_file:
@@ -56,10 +55,9 @@ def weapon_file_reader(weapon_input_path: Path):
             weapon_rows.append(line)
 
         if not armour_types:
-            logging.critical(
-                "Could not find header row (armour types) in weapon stats file")
-            raise Exception(
-                "Could not find header row (armour types) in weapon stats file")
+            error = "Could not find header row (armour types) in weapon stats file"
+            logging.error(error)
+            raise Exception(error)
 
     return set(armour_types), weapon_rows
 
@@ -71,7 +69,6 @@ def create_weapons_dict(armour_types: set, weapon_rows: list):
 
     :param armour_types: the set of possbile armour types
     :param weapon_rows: a list of the weapon csv rows
-
     :returns: a dictionary of all weapons mapped to their damage against
                 each armour type
     """
@@ -90,7 +87,6 @@ def get_weapon_dict(armour_types: set, weapon_row: list):
 
     :param armour_types: the set of possbile armour types
     :param weapon_rows: a single weapon csv rows
-
     :returns: a dictionary of a single weapon mapped to it's damage
                 against each armour type
     """

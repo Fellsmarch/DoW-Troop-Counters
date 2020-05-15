@@ -5,6 +5,8 @@ a list of weapons and an armour type associated with it.
 Harrison Cook
 May 2020
 """
+import logging
+
 from file_handlers import read_from_lua, create_and_check_path
 from pathlib import Path
 
@@ -20,7 +22,6 @@ def collate_troop_data(troops_config: dict, weapons_dict: dict, armour_types_dic
     :param weapons_dict: a dictionary of every weapon in DoW
     :param armour_types_dict: a dictionary of every armour type mapped
                                 to the troops that have it
-
     :returns: a dictionary containing every troop in DoW, with its
                 weapons and armour type
     """
@@ -46,9 +47,10 @@ def read_race_troops(race_troops_directory: str, armour_types_dict: dict):
                                     for this race are located
     :param armour_types_dict: a dictionary of every armour type mapped
                                 to the troops that have it
-
     :returns: a dictionary containing every troop in the input directory
                 mapped to it's weapons and armour type
+    :raises: a generic exception when no lua files are found in a provided
+                directory
     """
     race_troops_dict = {}
     race_troops_path = create_and_check_path(race_troops_directory, True)
@@ -69,8 +71,9 @@ def read_race_troops(race_troops_directory: str, armour_types_dict: dict):
 
     # In theory this could also be due to no weapons being found in a troop's .lua file
     if len(race_troops_dict) < 1:
-        raise Exception(
-            f"No (valid) .lua files found in the troops directory ('{str(race_troops_path)}')")
+        error = f"No (valid) .lua files found in the troops directory ('{str(race_troops_path)}')"
+        logging.error(error)
+        raise Exception(error)
 
     return race_troops_dict
 
@@ -81,7 +84,6 @@ def get_troop_info(troop_lua_lines: list):
     uses and the name of the troop.
 
     :param troop_lua_lines: the list of lines from the lua file for this troop
-
     :returns: (the troop name, the weapons this troop uses)
     """
     troop_name = None
@@ -105,7 +107,6 @@ def get_lua_key_value_pair(lua_line: str):
     Extracts a lua key:value pair from the provided lua line
 
     :param lua_line: a line from a lua file
-
     :returns: (the key from the lua line, the value from the lua line)
     """
     value_index = lua_line.find("=")
@@ -123,7 +124,6 @@ def get_lua_key(lua_key_value_str: str):
     For example: weapon_01 in ["weapon_table"]["weapon_01"]
 
     :param lua_key_value_str: the lua key-value pair as a string
-
     :returns: the last key value in the lua key
     """
     key = ""
@@ -143,7 +143,6 @@ def get_troop_name(lua_line: str, lua_key: str):
 
     :param lua_line: the lua line to search through
     :param lua_key: the lua key value in the line
-
     :returns: the troop name or None
     """
     troop_name = None
@@ -163,7 +162,6 @@ def get_weapon_filename(lua_value: str):
     if it is one, or None if it's another type of value.
 
     :param lua_value: the value from a lua line
-
     :returns: the weapon filename or None
     """
     lua_value = lua_value.strip()
@@ -183,7 +181,6 @@ def get_file_from_file_path(file_path: Path):
     Get's a troop's file from it's file path.
 
     :param file_path: the path to the troop file
-
     :returns: a filename string
     """
     file_path_str = str(file_path)
