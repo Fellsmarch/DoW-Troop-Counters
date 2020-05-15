@@ -96,7 +96,7 @@ def save_to_json(file_path: str, dict_to_save: dict):
     file_path_object = create_and_check_path(file_path, False)
 
     try:
-        logging.debug(f"Saving data to json file ({file_path})"
+        logging.debug(f"Saving data to json file ({file_path})")
 
         with open(file_path_object, "w") as outfile:
             json.dump(dict_to_save, outfile, cls=CustomEncoder, indent=4)
