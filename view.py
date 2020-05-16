@@ -49,15 +49,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def populate_races(self):
+        self.ui.opponentRaceList.clear()
         self.ui.opponentRaceList.addItems(list(self.troops))
+        self.ui.playerRaceList.clear()
         self.ui.playerRaceList.addItems(list(self.troops))
 
 
     def populate_troops(self, selected_race):
         self.ui.opponentUnitList.clear()
-        self.opponent_race_selected = selected_race.text()
-        for troop in self.troops[self.opponent_race_selected]:
-            CustomQListWidgetItem(self.troops[self.opponent_race_selected][troop]['display_name'], troop, self.ui.opponentUnitList)
+        if selected_race:
+            self.opponent_race_selected = selected_race.text()
+            for troop in self.troops[self.opponent_race_selected]:
+                CustomQListWidgetItem(self.troops[self.opponent_race_selected][troop]['display_name'], troop, self.ui.opponentUnitList)
 
 
     def select_troop(self, widget_item):
@@ -78,9 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def player_race_change(self, selected_race):
         if len(self.ui.opponentFileNameLabel.text()) > 0:
             self.populate_table(selected_race)
-        else:
-            print("Oopsies")
-
+            
 
     def populate_table(self, selected_race):
         selected_race = selected_race.text()
@@ -111,13 +112,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         try:
             status_label.setText("Generating data...")
-            status_label.resize(50, 50)
+            status_label.repaint()
             
             generate_data.run()
 
             status_label.setText("Populating GUI elements...")
-            self.init()
+            status_label.repaint()
 
+            self.init()
             status_label.setText("Done")
         except Exception as e:
             status_label.setText(f"Failed to generate data: {e}")
