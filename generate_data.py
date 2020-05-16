@@ -91,7 +91,7 @@ def calculate_counters(config: dict):
 
         logging.info(f"Finished finding counters for {race}")
 
-    save_to_json(config["data"]["counters"], counters)
+    save_to_json(config["data"]["counters"], sort_counters(counters))
 
 
 def sort_counters(counters: dict):
