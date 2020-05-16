@@ -81,7 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def player_race_change(self, selected_race):
         if len(self.ui.opponentFileNameLabel.text()) > 0:
             self.populate_table(selected_race)
-            
+
 
     def populate_table(self, selected_race):
         selected_race = selected_race.text()
@@ -107,7 +107,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def generate_data(self):
-        # Maybe I need to thread this?
         status_label = self.ui.statusLabel
 
         try:
