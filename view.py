@@ -22,17 +22,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.actionDewit.triggered.connect(self.generate_data)
 
+        self.first = True
+
         try:
             self.init()
         except:
             pass
 
+
     def init(self):
         self.config = load_from_json("config.json")
-        self.troops = load_from_json(self.config["data"]["troops"])
-        self.weapons = load_from_json(self.config["data"]["weapons"])
-        self.armour_types = load_from_json(self.config["data"]["armourTypes"])
-        self.counters = load_from_json(self.config["data"]["counters"])
+        self.troops = load_from_json(self.config["data"]["troops"], self.first)
+        self.weapons = load_from_json(self.config["data"]["weapons"], self.first)
+        self.armour_types = load_from_json(self.config["data"]["armourTypes"], self.first)
+        self.counters = load_from_json(self.config["data"]["counters"], self.first)
 
         self.current_troop_list = list(self.troops)
         self.opponent_race_selected = None
@@ -42,6 +45,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.playerRaceList.currentItemChanged.connect(self.player_race_change)
 
         self.populate_boxes()
+
+        first = False
 
 
     def populate_boxes(self):

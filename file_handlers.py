@@ -15,7 +15,7 @@ class PathNotFoundError(Exception):
     An exception for when either the directory doesn't exist, or the
     file doesn't exist.
     """
-    def __init__(self, message: str=None, path: str=None):
+    def __init__(self, message: str=None, path: str=None, suppress_logging: bool=False):
         """
         :param message: the message to display in the exception
         :param path: the string of the path that couldn't be found
@@ -23,7 +23,8 @@ class PathNotFoundError(Exception):
         if not message:
             path_str = f"({path}) " if path else ""
             message = f"The file or directory {path_str}was not found"
-            logging.error(f"PathNotFoundError: {message}")
+            if not suppress_logging:
+                logging.error(f"PathNotFoundError: {message}")
         super().__init__(message)
 
 
@@ -66,19 +67,20 @@ def create_directories(path: str):
     path_object.mkdir(parents=True, exist_ok=True)
 
 
-def create_and_check_path(path: str, reading: bool):
+def create_and_check_path(path: str, reading: bool, suppress_logging: bool=False):
     """
     Creates a path object and checks that path exists.
 
-    :param path: The path string
-    :param reading: Whether or not we are trying to read the file
+    :param path: the path string
+    :param reading: whether or not we are trying to read the file
+    :param suppress_loggin: whether or not to suppress logging
     :return: A Path object
     :raises PathNotFoundError: when the file or directory cannot be found
     """
     path_object = Path(path)
     if not path_object.exists():
         if reading:
-            raise PathNotFoundError(path=path)
+            raise PathNotFoundError(path=path, suppress_logging=suppress_logging)
 
         create_directories(path)
 
@@ -113,7 +115,7 @@ def load_from_json(file_path: str, suppress_logging=False):
     :param file_path: the path to file to read from
     :return: the data read from the file as a dictionary
     """
-    file_path_object = create_and_check_path(file_path, True)
+    file_path_object = create_and_check_path(file_path, True, suppress_logging)
 
     try:
         if not suppress_logging:

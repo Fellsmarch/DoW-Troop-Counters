@@ -4,3 +4,6 @@ data/
 *.ui
 __pycache__/
 input/
+build/
+dist/
+*.spec
