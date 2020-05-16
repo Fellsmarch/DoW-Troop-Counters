@@ -32,7 +32,6 @@ class CustomEncoder(json.JSONEncoder):
     A custom JSON encoder allowing me to pass in sets with changing them
     in code and also DamageInfo objects (from generate_data.py).
     """
-
     def default(self, obj):
         if isinstance(obj, set):
             return list(obj)
@@ -107,7 +106,7 @@ def save_to_json(file_path: str, dict_to_save: dict):
         raise e
 
 
-def load_from_json(file_path: str):
+def load_from_json(file_path: str, suppress_logging=False):
     """
     Reads from a given json file to a dictionary.
 
@@ -117,13 +116,16 @@ def load_from_json(file_path: str):
     file_path_object = create_and_check_path(file_path, True)
 
     try:
-        logging.debug(f"Reading data from json file ({file_path})")
+        if not suppress_logging:
+            logging.debug(f"Reading data from json file ({file_path})")
         with open(file_path_object, "r") as json_file:
             data = json.load(json_file)
-            logging.debug("Done")
+            if not suppress_logging:
+                logging.debug("Done")
             return data
     except Exception as e:
-        logging.error(f"Failed to load data from json file ({file_path}): {e}")
+        if not suppress_logging:
+            logging.error(f"Failed to load data from json file ({file_path}): {e}")
         raise e
 
 

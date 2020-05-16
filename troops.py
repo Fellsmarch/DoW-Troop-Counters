@@ -22,6 +22,7 @@ def collate_troop_data(troops_config: dict, weapons_dict: dict, armour_types_dic
     :param weapons_dict: a dictionary of every weapon in DoW
     :param armour_types_dict: a dictionary of every armour type mapped
                                 to the troops that have it
+
     :returns: a dictionary containing every troop in DoW, with its
                 weapons and armour type
     """
@@ -181,6 +182,7 @@ def get_file_from_file_path(file_path: Path):
     Get's a troop's file from it's file path.
 
     :param file_path: the path to the troop file
+
     :returns: a filename string
     """
     file_path_str = str(file_path)

@@ -11,8 +11,8 @@ It does this by generating data files for:
 Harrison Cook
 May 2020
 """
-
 import logging
+import traceback
 
 from weapons import collate_weapon_data
 from troops import collate_troop_data
@@ -220,34 +220,40 @@ def generate_troop_info(config: dict):
 def setup_logging(config: dict):
     """
     Sets up the logging configuration
-
     :param config: the configuration for the program
     """
     logging_level = config["loggingLevel"]
+    log_file = config["logFile"]
     filemode = "w" if config["loggingOverwrite"] else "a"
     FORMAT = "%(asctime)s %(levelname)s: %(message)s"
-    logging.basicConfig(filename="generate_data.log",
-                        level=logging_level, format=FORMAT, filemode=filemode)
+    
+    logging.basicConfig(filename=log_file, level=logging_level, format=FORMAT,
+                        filemode=filemode)
 
 
 def run():
-    config_filename = "config.json"
-    config = load_from_json(config_filename)
+    config = load_from_json("config.json", True)
 
     setup_logging(config)
 
-    logging.info("Starting generation of data")
+    try:
+        logging.info("Starting generation of data")
 
-    generate_weapon_info_and_armour_types(config)
+        generate_weapon_info_and_armour_types(config)
 
-    generate_troop_info(config)
+        generate_troop_info(config)
 
-    optimise_armour_types(config)
+        optimise_armour_types(config)
 
-    calculate_counters(config)
+        calculate_counters(config)
 
-    logging.info("Finished generating data\n\n")
+        logging.info("Finished generating data\n\n")
+    except Exception as e:
+        logging.exception(f"Failed to generate data: {e}")
+        raise e
 
 
 if __name__ == "__main__":
+    print("Starting...")
     run()
+    print("Done")

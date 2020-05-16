@@ -2,6 +2,7 @@
     "corsix_weapon_dps": "input/weapon_stats.csv",
     "loggingLevel": "INFO",
     "loggingOverwrite": false,
+    "logFile": "generate_data.log",
 
     "data": {
         "armourTypes": "data/armourTypes.json",
@@ -12,7 +13,7 @@
     },
     
     "troops": {
-        "Chaos Space Marines": "input/chaos",
+        "Chaos Space Marines": "input/chaos/",
         "Chaos Daemons": "input/daemons",
         "Dark Eldar": "input/dark_eldar",
         "Eldar": "input/eldar",

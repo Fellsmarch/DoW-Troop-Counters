@@ -108,18 +108,20 @@ class MainWindow(QtWidgets.QMainWindow):
     def generate_data(self):
         # Maybe I need to thread this?
         status_label = self.ui.statusLabel
-        status_label.setText("Generating data...")
-        status_label.text()
 
         try:
+            status_label.setText("Generating data...")
+            status_label.resize(50, 50)
+            
             generate_data.run()
+
+            status_label.setText("Populating GUI elements...")
+            self.init()
+
+            status_label.setText("Done")
         except Exception as e:
             status_label.setText(f"Failed to generate data: {e}")
-        status_label.setText("Populating GUI elements...")
-
-        self.init()
-        status_label.setText("Done")
-
+        
 
 app = QtWidgets.QApplication([])
 
