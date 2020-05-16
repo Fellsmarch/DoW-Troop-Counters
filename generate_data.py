@@ -176,7 +176,7 @@ def generate_weapon_info_and_armour_types(config: dict):
     """
     logging.info("Collating armour types and weapon data")
     armour_types_set, weapons_dict = collate_weapon_data(
-        config["corsix_weapon_dps"])
+        config["corsixWeaponDPS"])
     logging.debug("Done")
 
     save_to_json(config["data"]["weapons"], weapons_dict)
@@ -192,7 +192,7 @@ def generate_armour_type_info(config: dict, armour_types_set: set):
     :param config: the configuration for the program
     :param armour_types_set: the set of armour types
     """
-    armour_type_file = config["corsix_weapon_dps"]
+    armour_type_file = config["corsixWeaponDPS"]
 
     logging.info("Mapping troops to armour types")
     armour_types_dict = map_troops_to_armour_types(

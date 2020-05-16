@@ -1,5 +1,5 @@
 {
-    "corsix_weapon_dps": "input/weapon_stats.csv",
+    "corsixWeaponDPS": "input/weapon_stats.csv",
     "loggingLevel": "INFO",
     "loggingOverwrite": false,
     "logFile": "generate_data.log",
