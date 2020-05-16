@@ -84,8 +84,6 @@ class Ui_MainWindow(object):
         self.menubar.setObjectName("menubar")
         self.menuWhat = QtWidgets.QMenu(self.menubar)
         self.menuWhat.setObjectName("menuWhat")
-        self.menuYeet = QtWidgets.QMenu(self.menubar)
-        self.menuYeet.setObjectName("menuYeet")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -94,7 +92,6 @@ class Ui_MainWindow(object):
         self.actionDewit.setObjectName("actionDewit")
         self.menuWhat.addAction(self.actionDewit)
         self.menubar.addAction(self.menuWhat.menuAction())
-        self.menubar.addAction(self.menuYeet.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -111,5 +108,4 @@ class Ui_MainWindow(object):
         self.label_7.setText(_translate("MainWindow", "Choose race for find counter from"))
         self.statusLabelTitle.setText(_translate("MainWindow", "Status:"))
         self.menuWhat.setTitle(_translate("MainWindow", "Generate Data"))
-        self.menuYeet.setTitle(_translate("MainWindow", "Yeet"))
         self.actionDewit.setText(_translate("MainWindow", "Dewit"))
