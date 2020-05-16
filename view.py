@@ -46,7 +46,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.populate_boxes()
 
-        first = False
+        self.first = False
 
 
     def populate_boxes(self):
@@ -132,6 +132,7 @@ class MainWindow(QtWidgets.QMainWindow):
 app = QtWidgets.QApplication([])
 
 application = MainWindow()
+application.setWindowTitle("DoW Troop Counters")
 application.show()
 
 sys.exit(app.exec())
