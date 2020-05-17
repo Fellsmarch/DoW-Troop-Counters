@@ -16,9 +16,11 @@ class CustomQListWidgetItem(QtWidgets.QListWidgetItem):
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-
+        self.originalWindowTitle = "DoW Troop Counters"
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.setWindowTitle(self.originalWindowTitle)
 
         self.ui.actionDewit.triggered.connect(self.generate_data)
 
@@ -75,6 +77,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.opponentUnitNameLabel.setText(troop["display_name"])
             self.ui.opponentFileNameLabel.setText(troop["troop_file"])
             self.ui.opponentArmourTypeLabel.setText(troop["armour_types"])
+            self.ui.opponentUnitWeaponList.clear()
             self.ui.opponentUnitWeaponList.addItems(troop["weapons"])
         else:
             self.ui.opponentUnitNameLabel.clear()
@@ -96,6 +99,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Troop, Weapon, Damage
         table.setColumnCount(3)
+        table.setColumnWidth(0, 175)
+        table.setColumnWidth(1, 175)
+        table.setColumnWidth(2, 45)
         table.setRowCount(len(counters))
         table.setHorizontalHeaderLabels(["Troop", "Weapon", "DPS"])
 
@@ -103,36 +109,35 @@ class MainWindow(QtWidgets.QMainWindow):
             unit_name = self.troops[selected_race][counter["troop_file"]]["display_name"]
             table.setItem(index, 0, QtWidgets.QTableWidgetItem(unit_name)) 
             table.setItem(index, 1, QtWidgets.QTableWidgetItem(counter["weapon"]))
-            table.setItem(index, 2, QtWidgets.QTableWidgetItem(str(counter["damage"])))
+            table.setItem(index, 2, QtWidgets.QTableWidgetItem("{:.1f}".format(counter["damage"])))
 
 
     def reset_table(self):
         table = self.ui.playerCounterTable
         table.setRowCount(0)
 
+    
+    def setWindowStatus(self, new_title):
+        self.setWindowTitle(self.originalWindowTitle + " - " + new_title)
 
     def generate_data(self):
-        status_label = self.ui.statusLabel
-
         try:
-            status_label.setText("Generating data...")
-            status_label.repaint()
+            self.setWindowStatus("Generating data...")
             
             generate_data.run()
 
-            status_label.setText("Populating GUI elements...")
-            status_label.repaint()
+            self.setWindowStatus("Populating GUI elements..")
 
             self.init()
-            status_label.setText("Done")
+            self.setWindowStatus("Data successfuly generated")
         except Exception as e:
-            status_label.setText(f"Failed to generate data: {e}")
+            self.setWindowStatus(f"Failed to generate data: {e}")
         
 
 app = QtWidgets.QApplication([])
 
 application = MainWindow()
-application.setWindowTitle("DoW Troop Counters")
+# application.setWindowTitle("DoW Troop Counters")
 application.show()
 
 sys.exit(app.exec())
