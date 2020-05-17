@@ -1,5 +1,5 @@
 # DoW Troop Counters
-This program allows you to find the units in Dawn of War: Soulstorm that do the most damage to a unit of your choice (the unit which counters another unit). The GUI only runs on Windows, but the python script will work to generate the data files that are displayed in the GUI.
+Dawn of War Troop Counters allows you to find the units in Dawn of War: Soulstorm that do the most damage to a unit of your choice (the unit which counters another unit). The GUI only runs on Windows, but the python script will work to generate the data files that are displayed in the GUI.
 
 # Usage
 1. Download the packaged release [here](https://github.com/Fellsmarch/DoW-Troop-Counters/releases)
@@ -20,7 +20,7 @@ This program allows you to find the units in Dawn of War: Soulstorm that do the 
 ### Steps:
 1. Clone repository or download zip
 2. Generate or download your input files and point the corresponding config values to them
-3. Open terminal/command line/powershell and change to directory containing the program
+3. Open terminal/command line/powershell and change to directory containing the DoW Troop Counters program
 4. Run `python view.py` (or `python3 view.py` depending on your installation). The GUI should appear up
 5. Same as above from step 5
 
@@ -36,10 +36,10 @@ The config file allows you to customise input files, output files and logging se
 - `loggingOverwrite` - whether or not the logging file should be overwritten (write-mode), or appended to (append-mode)
 - `logFile` - the file to save logs to
 - `data` files - where each data file should be saved to
-- `troops` - an object mapping race names to input directories for those races. These must be present for the program to run, so remove unwanted races from the config file
+- `troops` - an object mapping race names to input directories for those races. These must be present for DoW Troop Counters to run, so remove unwanted races from the config file
 
 # Inputs
-This program may have issues pointing to directories with with full stops ('.') in the name, use with caution. I personally play Salcol's patch for Ultimate Apocalypse, so I have all the input files generated for `Salcol's 1.23`, you can download them [here](https://drive.google.com/file/d/1vnw8au0XT5l06UgcQaeJhyiR5mP7DUjm/view?usp=sharing) if you want.
+DoW Troop Counters may have issues pointing to directories with with full stops ('.') in the name, use with caution. I personally play Salcol's patch for Ultimate Apocalypse, so I have all the input files generated for `Salcol's 1.23`, you can download them [here](https://drive.google.com/file/d/1vnw8au0XT5l06UgcQaeJhyiR5mP7DUjm/view?usp=sharing) if you want.
 
 ## Weapon DPS file
 `corsixWeaponDPS` in the config file, this file lists every weapon and it's DPS against every armour type. This method to generate this file is by using [Corsix's Mod Studio](http://modstudio.corsix.org/). 
@@ -51,7 +51,7 @@ This generates an HTML file you can open in you web browser, do this and then co
 Paste the contents of that web page into Excel (a similar program may work). Save this file as a `.csv` and that is your `corsixWeaponDPS` file.
 
 ## Troop files
-Troop files are manually time consuming to generate, I have found no .rgd to .lua program that works for me. To generate them, you need Corsix's again.
+Troop files are manually time consuming to generate, I have found no .rgd to .lua program that works for me on DoW 1. To generate them, you need Corsix's again.
 
 When you have loaded a mod (or base game) go to `Data` -> `attrib` -> `ebps` -> `races` -> choose a race -> `troops`.
 
