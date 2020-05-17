@@ -5,7 +5,7 @@ This program allows you to find the units in Dawn of War: Soulstorm that do the 
 1. Download the packaged release [here](https://github.com/Fellsmarch/DoW-Troop-Counters/releases)
 2. Unzip
 3. Generate or download (see input section below) your input files and point the corresponding config values to them
-4. Run `view.exe` and the GUI should appear
+4. Run `DoW Troop Counters.exe` and the GUI should appear
 5. To generate the data and populate the lists go to the `Generate Data` menu option and click `dewit`
 6. Select your opponent's race 
 7. Select your opponent's troop
