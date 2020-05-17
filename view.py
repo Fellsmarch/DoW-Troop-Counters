@@ -32,6 +32,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.first = True
 
+        table = self.ui.playerCounterTable
+        # Troop, Weapon, Damage columns
+        table.setColumnCount(3)
+        # Table has a min size of 420
+        table.setColumnWidth(0, 175)
+        table.setColumnWidth(1, 175)
+        table.setColumnWidth(2, 45)
+        table.setHorizontalHeaderLabels(["Troop", "Weapon", "DPS"])
+
         try:
             self.init()
         except:
@@ -118,19 +127,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
         :param selected_race: the player race the user has selected
         """
+        self.reset_table()
         selected_race = selected_race.text()
         selected_armour_type = self.ui.opponentArmourTypeLabel.text()
         counters = self.counters[selected_race][selected_armour_type]
+        
         table = self.ui.playerCounterTable
-
-        # Troop, Weapon, Damage columns
-        table.setColumnCount(3)
-        # Table has a min size of 420
-        table.setColumnWidth(0, 175)
-        table.setColumnWidth(1, 175)
-        table.setColumnWidth(2, 45)
         table.setRowCount(len(counters))
-        table.setHorizontalHeaderLabels(["Troop", "Weapon", "DPS"])
 
         for index, counter in enumerate(counters):
             unit_name = self.troops[selected_race][counter["troop_file"]]["display_name"]
@@ -143,8 +146,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Resets the counter table.
         """
-        table = self.ui.playerCounterTable
-        table.setRowCount(0)
+        self.ui.playerCounterTable.setRowCount(0)
 
 
     def setWindowStatus(self, new_status):

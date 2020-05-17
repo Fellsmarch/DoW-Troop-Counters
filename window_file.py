@@ -213,7 +213,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "DoW Troop Counters"))
-        self.playerCounterTable.setSortingEnabled(True)
+        self.playerCounterTable.setSortingEnabled(False)
         self.label.setText(_translate("MainWindow", "Race you are trying to counter"))
         self.label_2.setText(_translate("MainWindow", "Unit you are trying to counter"))
         self.label_3.setText(_translate("MainWindow", "Race you are playing"))
