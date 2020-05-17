@@ -1,3 +1,9 @@
+"""
+This module provides a GUI for the DoW Troop Counters program.
+
+Harrison Cook
+May 2020
+"""
 import sys
 import generate_data
 
@@ -33,6 +39,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def init(self):
+        """
+        Initialises the data display in the GUI
+        """
         self.config = load_from_json("config.json")
         self.troops = load_from_json(self.config["data"]["troops"], self.first)
         self.weapons = load_from_json(self.config["data"]["weapons"], self.first)
@@ -43,19 +52,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.opponent_race_selected = None
 
         self.ui.opponentRaceList.currentItemChanged.connect(self.populate_troops)
-        self.ui.opponentUnitList.currentItemChanged.connect(self.select_troop)
+        self.ui.opponentUnitList.currentItemChanged.connect(self.display_troop)
         self.ui.playerRaceList.currentItemChanged.connect(self.player_race_change)
 
-        self.populate_boxes()
+        self.populate_races()
 
         self.first = False
 
 
-    def populate_boxes(self):
-        self.populate_races()
-
-
     def populate_races(self):
+        """
+        Populates the race lists.
+        """
         self.ui.opponentRaceList.clear()
         self.ui.opponentRaceList.addItems(list(self.troops))
         self.ui.playerRaceList.clear()
@@ -63,6 +71,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def populate_troops(self, selected_race):
+        """
+        Populates the troop lists
+        
+        :param selected_race: the race that has been selected by the user
+        """
         self.ui.opponentUnitList.clear()
         if selected_race:
             self.opponent_race_selected = selected_race.text()
@@ -70,10 +83,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 CustomQListWidgetItem(self.troops[self.opponent_race_selected][troop]['display_name'], troop, self.ui.opponentUnitList)
 
 
-    def select_troop(self, widget_item):
+    def display_troop(self, selected_troop):
+        """
+        Populates the troop information labels when a troop is selected.
+
+        :param selected_troop: the troop that has been selected
+        """
         self.reset_table()
-        if widget_item:
-            troop = self.troops[self.opponent_race_selected][widget_item.value]
+        if selected_troop:
+            troop = self.troops[self.opponent_race_selected][selected_troop.value]
             self.ui.opponentUnitNameLabel.setText(troop["display_name"])
             self.ui.opponentFileNameLabel.setText(troop["troop_file"])
             self.ui.opponentArmourTypeLabel.setText(troop["armour_types"])
@@ -87,18 +105,27 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def player_race_change(self, selected_race):
+        """
+        Process the user changing the player race selection.
+        """
         if len(self.ui.opponentFileNameLabel.text()) > 0:
             self.populate_table(selected_race)
 
 
     def populate_table(self, selected_race):
+        """
+        Populates the counters (DPS) table.
+
+        :param selected_race: the player race the user has selected
+        """
         selected_race = selected_race.text()
         selected_armour_type = self.ui.opponentArmourTypeLabel.text()
         counters = self.counters[selected_race][selected_armour_type]
         table = self.ui.playerCounterTable
 
-        # Troop, Weapon, Damage
+        # Troop, Weapon, Damage columns
         table.setColumnCount(3)
+        # Table has a min size of 420
         table.setColumnWidth(0, 175)
         table.setColumnWidth(1, 175)
         table.setColumnWidth(2, 45)
@@ -113,14 +140,27 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def reset_table(self):
+        """
+        Resets the counter table.
+        """
         table = self.ui.playerCounterTable
         table.setRowCount(0)
 
-    
-    def setWindowStatus(self, new_title):
-        self.setWindowTitle(self.originalWindowTitle + " - " + new_title)
+
+    def setWindowStatus(self, new_status):
+        """
+        Sets the window title status by appending the status to the 
+        original window title.
+
+        :param new_status: the new status to display
+        """
+        self.setWindowTitle(self.originalWindowTitle + " - " + new_status)
+
 
     def generate_data(self):
+        """
+        Runs the data generation script.
+        """
         try:
             self.setWindowStatus("Generating data...")
             
@@ -132,12 +172,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setWindowStatus("Data successfuly generated")
         except Exception as e:
             self.setWindowStatus(f"Failed to generate data: {e}")
-        
 
-app = QtWidgets.QApplication([])
 
-application = MainWindow()
-# application.setWindowTitle("DoW Troop Counters")
-application.show()
+if __name__ == "__main__":
+    app = QtWidgets.QApplication([])
 
-sys.exit(app.exec())
+    application = MainWindow()
+    application.show()
+
+    sys.exit(app.exec())
