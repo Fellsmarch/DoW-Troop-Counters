@@ -21,7 +21,7 @@ Dawn of War Troop Counters allows you to find the units in Dawn of War: Soulstor
 1. Clone repository or download zip
 2. Generate or download your input files and point the corresponding config values to them
 3. Open terminal/command line/powershell and change to directory containing the DoW Troop Counters program
-4. Run `python view.py` (or `python3 view.py` depending on your installation). The GUI should appear up
+4. Run `python view.py` (or `python3 view.py` depending on your installation). The GUI should appear
 5. Same as above from step 5
 
 ## Generating data without the GUI
